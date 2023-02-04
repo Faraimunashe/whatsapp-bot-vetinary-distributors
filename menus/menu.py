@@ -8,7 +8,7 @@ def general_agric_info():
 
 #main 2
 def nearest_branch():
-    return "*FIND NEAREST BRANCH*\n  Where are you?\n type *help* for help, *cancel* to end process."
+    return "*FIND NEAREST BRANCH*\n  Send us your location."
 
 #main 3
 def quotations():

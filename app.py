@@ -2,6 +2,7 @@ from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from models import *
 from menus.menu import *
+from distance import find
  
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ProfessorSecret'
@@ -81,11 +82,22 @@ def wa_sms_reply():
                 reply.body(machinery())
 
         elif bot.menu == "main-branch":
-            if msg == "1":
-                bot.menu = 'main-general-machinery'
-                db.session.commit()
+            latitude = request.form.get('Latitude')
+            longitude = request.form.get('Longitude')
 
-                reply.body(machinery())
+            if latitude == None or longitude == None:
+                reply.body("*Please us a valid location*")
+            else:
+                reply.body("*Location received*")
+                branches = Branch.query.all()
+                result = branches_schema.dump(branches)
+                # print(branches)
+                # print("\n New Line here \n")
+                # print(result)
+                user_location = (latitude, longitude)
+                for res in branches:
+                    branch_location = (res.latitude, res.longitude)
+                    print(find(user_location, branch_location))
 
 
  
@@ -93,6 +105,7 @@ def wa_sms_reply():
 
 
 
+    #print(request.form)
     return str(resp)
  
 if __name__ == "__main__":
