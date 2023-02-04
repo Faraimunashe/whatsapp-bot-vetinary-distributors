@@ -3,6 +3,8 @@ from twilio.twiml.messaging_response import MessagingResponse
 from models import *
 from menus.menu import *
 from distance import find
+from decimal import Decimal
+from wiki import wikibot
  
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ProfessorSecret'
@@ -72,14 +74,23 @@ def wa_sms_reply():
                 bot.menu = 'main-quote'
                 db.session.commit()
 
-                reply.body(quotations())
+                message = "*GET QUOTATION*\n"
+                products = Product.query.all()
+                results = products_schema.dump(products)
+                for product in products:
+                    #print(product)
+                    message = message+"*"+product.code+"* "+product.name+" $"+str(product.price)+"\n"
+
+                message = message+"\n_Select the product code and seperate with a comma to  generate a custom quote eg *1001,1002,1009* no spaces allowed._ \n*cancel* to exit, *help* for help."
+                reply.body(message)
         
         elif bot.menu == "main-general":
-            if msg == "1":
-                bot.menu = 'main-general-machinery'
-                db.session.commit()
+            qstn = msg.replace(' ', '_')
+            answer = wikibot(qstn)
 
-                reply.body(machinery())
+            answer = answer + "\n\n *cancel* to exit, *help* for help."
+            print(answer)
+            reply.body(answer)
 
         elif bot.menu == "main-branch":
             latitude = request.form.get('Latitude')
@@ -88,16 +99,37 @@ def wa_sms_reply():
             if latitude == None or longitude == None:
                 reply.body("*Please us a valid location*")
             else:
-                reply.body("*Location received*")
                 branches = Branch.query.all()
                 result = branches_schema.dump(branches)
                 # print(branches)
                 # print("\n New Line here \n")
                 # print(result)
                 user_location = (latitude, longitude)
+                distance_array = []
                 for res in branches:
                     branch_location = (res.latitude, res.longitude)
-                    print(find(user_location, branch_location))
+                    distance = find(user_location, branch_location)
+                    distance_array.append(distance)
+                
+                pos = distance_array.index(min(distance_array))
+                print(branches[pos].name)
+                bot.menu = 'main'
+                db.session.commit()
+                reply.body("*THE NEAREST BRANCH:*\n *"+branches[pos].name+"*\n *address:* "+branches[pos].address+"\n *telephone:* "+branches[pos].telephone+"\n *mobile:* "+branches[pos].mobile+"\n *email:* "+branches[pos].email)
+
+        elif bot.menu == "main-quote":
+            options = msg.split(',')
+            quote = Product.query.filter(Product.code.in_(options)).all()
+            total_price = 0.00
+            custom_quote = "*CUSTOM QUOTE - "+name+"*\n\n"
+            for q in quote:
+                custom_quote = custom_quote + "*"+q.code+"* "+q.name+" $"+str(q.price)+"\n"
+                total_price = Decimal(total_price) + Decimal(q.price)
+            
+            custom_quote = custom_quote + "\n*Price* $"+str(total_price)+"\n*Discount* $0.00\n*Total Price* $"+str(total_price)+"\n"
+            
+            custom_quote = custom_quote + "\n*cancel* to exit, *help* for help."
+            reply.body(custom_quote)
 
 
  

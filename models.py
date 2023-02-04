@@ -40,6 +40,17 @@ class Branch(db.Model):
         self.longitude=longitude
 
 
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(4))
+    name = db.Column(db.String(80))
+    price = db.Column(db.Numeric(precision=10, scale=2))
+
+    def __init__(self, code, name, price):
+        self.code=code
+        self.name=name
+        self.price=price
+
 #Bot Schema
 class BotSchema(ma.Schema):
     class Meta:
@@ -57,3 +68,12 @@ class BranchSchema(ma.Schema):
 #initilize schema
 branch_schema = BranchSchema()
 branches_schema = BranchSchema(many=True)
+
+#Product Schema
+class ProductSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'code', 'name', 'price')
+
+#initialize product schema
+product_schema = ProductSchema()
+products_schema = ProductSchema(many=True)

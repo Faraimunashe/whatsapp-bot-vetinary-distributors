@@ -4,29 +4,14 @@ def main_menu():
 
 #main 1
 def general_agric_info():
-    return "*GENERAL AGRIC INFORMATION*\n 1) Machinery\n 2) Crops\n 3) Animal Husbandry\n 4) Pestcides\n _Choose an option_ type *help* for help, *cancel* to end process."
+    return "*Type anything related to agriculture:*\n eg. foot and mouth \n _This search engine is powered by wikipedia._"
 
 #main 2
 def nearest_branch():
     return "*FIND NEAREST BRANCH*\n  Send us your location."
-
-#main 3
-def quotations():
-    return "*QUOTATIONS*\n 1) Display all product\n 2) Pesticides\n 3) Medications\n 4) Pestcides _Choose an option_ type *help* for help, *cancel* to end process."
 
 #help
 def help():
     return "*HELP*\n _Inorder to get valid responses please select valid option number e.g_ *3*\n _When you feel lost just type *cancel* the procedure will restart_"
 
 
-#main 1.1
-def machinery():
-    return "*AVAILABLE MACHINERY*\n *cancel* to end process."
-
-#main 1.2
-def crop():
-    return "*CROP*\n *cancel* to end process."
-
-#main 1.3
-def animal():
-    return "*ANIMAL*\n *cancel* to end process."
