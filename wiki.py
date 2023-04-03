@@ -31,7 +31,7 @@ def wikibot(words):
             #print(soup('p')[i].text)
             return msg
         except IndexError:
-            return "*ERROR -* Please try using sigle term word for accuracy or few words or use another term."
+            return "*ERROR -* Please be specific, do you need a quotation or find nearest branch? make sure u involve those words or closely related words."
 
     
 

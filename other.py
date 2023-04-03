@@ -22,12 +22,20 @@ def LemNormalize(text):
     return LemTokens(nltk.word_tokenize(text.lower().translate(remove_punct_dict)))
 
 GREETING_INPUTS = ("hello", "hi", "greetings", "sup", "what's up","hey",)
+PRODUCT_LISTING = ("products", "list", "list products", "products list", "product listing","list available products", "show me products", "show products",)
 GREETING_RESPONSES = ["hi", "hey", "*nods*", "hi there", "hello", "I am glad! You are talking to me"]
 def greeting(sentence):
  
     for word in sentence.split():
         if word.lower() in GREETING_INPUTS:
             return random.choice(GREETING_RESPONSES)
+        
+def list_products(sentence):
+    for word in sentence.split():
+        if word.lower() in PRODUCT_LISTING:
+            return True
+        return False
+
 
 
 def quotation(user_response):

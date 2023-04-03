@@ -12,6 +12,6 @@ def nearest_branch():
 
 #help
 def help():
-    return "*HELP*\n _Inorder to get valid responses please select valid option number e.g_ *3*\n _When you feel lost just type *cancel* the procedure will restart_"
+    return "*HELP*\n _Inorder to get valid responses please type specific keywords or closely related words to your request e.g_ *May i have a quote of Dip x3, Niddles x5*\n _When you feel lost just type *cancel* the bot will refresh_"
 
 

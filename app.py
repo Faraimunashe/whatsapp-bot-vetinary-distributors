@@ -25,6 +25,36 @@ ma.init_app(app)
 with app.app_context():
     db.create_all()
 
+GREETING_INPUTS = ("hi", "hello", "hey", "helloo", "hellooo", "g morning",  "gmorning",  "good morning", "morning", "good day", "good afternoon", "good evening", "greetings", "greeting", "good to see you", "its good seeing you", "how are you", "how're you", "how are you doing", "how ya doin'", "how ya doin", "how is everything", "how is everything going", "how's everything going", "how is you", "how's you", "how are things", "how're things", "how is it going", "how's it going", "how's it goin'", "how's it goin", "how is life been treating you", "how's life been treating you", "how have you been", "how've you been", "what is up", "what's up", "what is cracking", "what's cracking", "what is good", "what's good", "what is happening", "what's happening", "what is new", "what's new", "what is neww", "g'day", "howdy",)
+GREETING_RESPONSES = ["hi", "hey", "hellooo", "hi there", "hello", "I am glad! You are talking to me", "Great, hope you're good!", "I am ok", "Hey! How may i help you?"]
+def greeting(sentence):
+ 
+    for word in sentence.split():
+        if word.lower() in GREETING_INPUTS:
+            return random.choice(GREETING_RESPONSES)
+
+PRODUCT_LISTING = ("products", "list", "list products", "products list", "product listing","list available products", "show me products", "show products", "can i have your product list",)
+PRODUCT_RESPONSES = ["Well! here you are", "This is the product list"]
+def list_products(sentence):
+    for word in sentence.split():
+        if word.lower() in PRODUCT_LISTING:
+            return random.choice(PRODUCT_RESPONSES)
+    
+LOCATION_LISTING = ("location", "neareast", "nearest branch", "closest branch", "near branch", "close branch", "my branch", "where to find help", "close location", "close office", "branch in my area", "branch around", "where can i find you", "visit", "in my area", "where are you located",)
+LOCATION_RESPONSES = ["Ok! Send me your location and i tell you.", "Fine, Send me your location.", "Send your location.", "May you please send me your location", "Where are you? send me location", "If you send me your location i can tell you."]
+def list_locations(sentence):
+    for word in sentence.split():
+        if word.lower() in LOCATION_LISTING:
+            return random.choice(LOCATION_RESPONSES)
+        
+
+QUOTE_LISTING = ("quotation", "quotations", "how to take quotation", "how do i take a quotation", "i want a quotation", "give me a quotation", "see quotation", "i need a quotation",)
+QUOTE_RESPONSES = ["Ok! It's easy, just include the word quote and the names of the products you want, include quantity after every product eg Product x4.", "Fine, Send me the word quote followed by your Product x any quantity."]
+def list_quotes(sentence):
+    for word in sentence.split():
+        if word.lower() in QUOTE_LISTING:
+            return random.choice(QUOTE_RESPONSES)
+
 
 def randomword(length):
    letters = string.ascii_lowercase
@@ -112,46 +142,21 @@ def wa_sms_reply():
 
         reply.media("static/"+docname)
     else:
-        if msg == "menu":
-            bot.menu = 'main'
+        if(list_products(msg) != None):
+
+            message = "*Product List*\n"
+            products = Product.query.all()
+            for product in products:
+                message = message+"*"+product.code+"* "+product.name+" $"+str(product.price)+"\n"
+
+            message = message+"\n_Now you can request a quotation by specifying product name and quantity e.g PRODUCT x3_"
+            reply.body(message)
+
+        elif(list_locations(msg) != None):
+            bot.menu = 'main-branch'
             db.session.commit()
 
-            reply.body(main_menu())
-
-        if bot.menu == "main":
-            if msg == "1":
-                bot.menu = 'main-general'
-                db.session.commit()
-
-                reply.body(general_agric_info())
-
-            elif msg == "2":
-                bot.menu = 'main-branch'
-                db.session.commit()
-
-                reply.body(nearest_branch())
-
-            elif msg == "3":
-                bot.menu = 'main-quote'
-                db.session.commit()
-
-                message = "*GET QUOTATION*\n"
-                products = Product.query.all()
-                results = products_schema.dump(products)
-                for product in products:
-                    #print(product)
-                    message = message+"*"+product.code+"* "+product.name+" $"+str(product.price)+"\n"
-
-                message = message+"\n_Select the product code and seperate with a comma to  generate a custom quote eg *1001,1002,1009* no spaces allowed._ \n*cancel* to exit, *help* for help."
-                reply.body(message)
-        
-        elif bot.menu == "main-general":
-            qstn = msg.replace(' ', '_')
-            answer = wikibot(qstn)
-
-            answer = answer + "\n\n *cancel* to exit, *help* for help."
-            print(answer)
-            reply.body(answer)
+            reply.body(list_locations(msg))
 
         elif bot.menu == "main-branch":
             latitude = request.form.get('Latitude')
@@ -178,9 +183,29 @@ def wa_sms_reply():
                 db.session.commit()
                 reply.body("*THE NEAREST BRANCH:*\n *"+branches[pos].name+"*\n *address:* "+branches[pos].address+"\n *telephone:* "+branches[pos].telephone+"\n *mobile:* "+branches[pos].mobile+"\n *email:* "+branches[pos].email)
 
+        elif(greeting(msg) != None):
+            bot.menu = 'main'
+            db.session.commit()
+
+            reply.body(greeting(msg))
+
+        elif(list_quotes(msg) != None):
+            bot.menu = 'main'
+            db.session.commit()
+
+            reply.body(list_quotes(msg))
+
+        else:
+            qstn = msg.replace(' ', '_')
+            answer = wikibot(qstn)
+
+            answer = answer + "\n\n"
+            print(answer)
+            reply.body(answer)
 
 
     #print(request.form)
+    print(msg)
     return str(resp)
  
 if __name__ == "__main__":
