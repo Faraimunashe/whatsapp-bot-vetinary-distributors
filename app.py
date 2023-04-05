@@ -4,7 +4,7 @@ from models import *
 from menus.menu import *
 from distance import find
 from decimal import Decimal
-from wiki import wikibot
+from chatgpt import nlp
 import re
 from get_int import integer
 import pdfkit
@@ -196,10 +196,9 @@ def wa_sms_reply():
             reply.body(list_quotes(msg))
 
         else:
-            qstn = msg.replace(' ', '_')
-            answer = wikibot(qstn)
+            qstn = msg
+            answer = nlp(qstn)
 
-            answer = answer + "\n\n"
             print(answer)
             reply.body(answer)
 
