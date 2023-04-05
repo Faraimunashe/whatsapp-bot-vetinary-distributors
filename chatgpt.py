@@ -1,6 +1,6 @@
 import os
 import openai
-openai.api_key = "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"
+openai.api_key = ""
 
 def nlp(msg):
   try:
