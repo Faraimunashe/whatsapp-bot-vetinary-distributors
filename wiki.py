@@ -27,8 +27,6 @@ def wikibot(words):
         try:
             msg = msg + "\n*"+ soup('h2')[i].text +"*\n"
             msg = msg + soup('p')[i].text
-            #print(soup('h2')[i].text)
-            #print(soup('p')[i].text)
             return msg
         except IndexError:
             return "*ERROR -* Please be specific, do you need a quotation or find nearest branch? make sure u involve those words or closely related words."
